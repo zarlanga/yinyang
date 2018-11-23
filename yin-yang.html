@@ -160,7 +160,7 @@ class CirCulo {
 			grd1= ctx.createLinearGradient(x-r,y-r,x-r,y+r); //gradiente vertical (diagonal?)
 			}
 
-			if ( ( (this.ladopaterno == true || this.nivel < 2) && !vertical) || (vertical && ( !this.lado && !orden2) || (this.nivel % 2 == 0 && orden2))) { 
+			if ( ( (this.ladopaterno == true || this.nivel < 2) && !vertical) || (vertical && ( ( !this.lado && !orden2) || (this.nivel % 2 == 0 && orden2))) ) { 
 			// (vertical && !this.lado) this.nivel % 2 == 0
 			grd1.addColorStop(0,color1);
 			grd1.addColorStop(1,color2);
