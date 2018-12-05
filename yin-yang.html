@@ -9,7 +9,7 @@
 
 <canvas id="myCanvas" width="500" height="500"  style="border:1px solid;background-color: gray"></canvas>
 <div style='float:right'>
-elegir cantidad de niveles<input type="number" name="lvls" id="lvls" oninput="clickNiveles(this.value)" min="0" max="10" step="1" value="4">
+elegir cantidad de niveles<input type="number" name="lvls" id="lvls" oninput="clickNiveles(this.value)" min="0" max="10" step="1" value="6">
 <br>
 orden 1<input type="checkbox" onchange="clickCheck1()" checked="checked">
 <br>
@@ -33,12 +33,17 @@ var ctx = canvas.getContext("2d");
 
 var col1 = "#ffffff";
 var col2 = "#000000";
-var lvls = 4;
+var lvls = 6;
 var orden1 = true;
 var orden2 = true;
-var vertical = false;
+var vertical = true;
+var cont = 0;
 
+var arranque = canvas.getAttribute("width") /2 ;
 //alert("queondavato");
+
+
+
 
 //seltop, selleft, html5
 
@@ -86,6 +91,8 @@ class CirCulo {
 	this.lado=lado;
 	this.nivel= niv;
 	
+	
+	
 	if (pater == null) {
 		//circulo original
 		this.padre=null;
@@ -93,12 +100,13 @@ class CirCulo {
 		this.posY=y;
 		this.rad=r;
 		this.ladopaterno=true;
+		this.rot=0.001;
 		} else {
 		//circulos secundarios
 		this.padre=pater;
 		this.ladopaterno= pater.lado; //deeeeesprolijo, mejor hacer una condicion para el primer circulo que da null (#oNo ? ) 
 		this.rad = pater.rad/2;
-		
+		this.rot=pater.rot*3;
 		//document.getElementById("test").innerHTML += (this.nivel % 2 == 0 )+ "\\";
 		
 		
@@ -124,9 +132,43 @@ class CirCulo {
 		}
 	}
 	
+	rotar() {
+		if(this.nivel>0) {
+		if ( ( (this.nivel % 2 == 0 && orden2) ||
+				(!orden2 &&
+					( (this.nivel % 2 == 0 && !this.ladopaterno) || (this.nivel % 2 == 1 && this.ladopaterno  ) ) ) ) && !vertical ) {
+				 
+			//&& this.padre.lado) || (this.nivel % 2 == 1 && !this.padre.lado //usar estas condiciones para "desordenar"
+				this.posY= pater.posY ;
+				if (this.lado == false) {
+					this.posX = pater.posX - this.rad;
+				} else {
+					this.posX = pater.posX + this.rad;
+				}
+			} else {
+			
+				
+				
+				if (this.lado == false) {
+					this.posX = Math.floor(this.padre.posX + this.rad * Math.cos(this.rot*cont + Math.PI/2));
+					this.posY = Math.floor(this.padre.posY - this.rad * Math.sin(this.rot*cont + Math.PI/2));
+				} else {
+					this.posX = Math.floor(this.padre.posX - this.rad * Math.cos(this.rot*cont + Math.PI/2));
+					this.posY = Math.floor(this.padre.posY - this.rad * Math.sin(this.rot*cont + Math.PI * (3/2)));
+				}
+				}
+			}
+			
+			this.dibujar();
+			
+	
+	}
+	
 	dibujar() {
 		//if (this.lado == false) {
+			//document.getElementById("test").innerHTML += this.posY + "\\";
 			this.dibujarcirculo(this.posX, this.posY, this.rad, col1, col2 ); //centra negro
+			
 		//} else {
 			//this.dibujarcirculo(this.posX, this.posY, this.rad, col2, col1); //centra blanco
 		//}
@@ -148,7 +190,7 @@ class CirCulo {
 			}
 			
 		
-		} else {
+		}  else {
 		
 			if ( ( (this.nivel % 2 == 0 && orden2) ||
 				(!orden2 &&
@@ -173,20 +215,44 @@ class CirCulo {
 
 		ctx.fillStyle = grd1;
 		ctx.beginPath();
-		ctx.arc(x,y,r,0,2*Math.PI);
+		ctx.arc(x,y,r,0,Math.PI*2);
+		//ctx.arc(x,y,r,-Math.PI/2 - this.rot*cont,Math.PI/2-this.rot*cont);
+		
 		//ctx.stroke();
+		/*ctx.fill();
+		ctx.fillStyle = col2;
+		ctx.beginPath();
+		ctx.arc(x,y,r,Math.PI/2-this.rot*cont,1.5*Math.PI-this.rot*cont); */
 		ctx.fill();
 	}
 }	
 
+
+
+function giragira() {
+		
+		//document.getElementById("test").innerHTML += "||";
+		cont--;
+		for(var i= 0; i<culos.length;i++) {
+		
+		
+		
+			for (var j=0; j < culos[i].length; j++) {
+			//document.getElementById("test").innerHTML += j+ "\\";
+				culos[i][j].rotar();
+				
+			}
+		}
+		//document.getElementById("test").innerHTML += cont + "\\";
+		
+		
+}
+
+
 //alert("pedo");
 function dalemasa(niveles){
 	
-	var arranque = canvas.getAttribute("width") /2 ;
 
-	var culos = [[new CirCulo(null, false, 0, arranque,arranque,arranque)]];
-	//alert("caca");
-	culos[0][0].dibujar();
 	var lado = true;
 	
 	for (var i=1; i < niveles; i++) {
@@ -201,11 +267,16 @@ function dalemasa(niveles){
 	
 }
 
-
+var culos = [[new CirCulo(null, false, 0, arranque,arranque,arranque)]];
+	//alert("caca");
+culos[0][0].dibujar();
 
 
 dalemasa(lvls);
 
+setInterval(function () {
+                        giragira()
+                    }, 40);
 
 </script>
 </body>
