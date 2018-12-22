@@ -42,6 +42,8 @@ var orden2 = true;
 var vertical = false;
 var mover = false;
 var cont = 0;
+var mult = 3;
+var velArranque=0.0008;
 
 var muevelo;
 
@@ -74,7 +76,7 @@ function clickCheck3() {
 function clickCheck4() {
 	mover = !mover;
 	if(mover) {
-		muevelo = setInterval(function () { dalemasa(lvls);cont--; }, 40);
+		muevelo = setInterval(function () { dalemasa(lvls);cont--; }, 20);
 	} else {
 	clearInterval(muevelo);
 	}
@@ -115,13 +117,13 @@ class CirCulo {
 		this.posY=y;
 		this.rad=r;
 		this.ladopaterno=true;
-		this.rot=0.001;
+		this.rot=velArranque;
 		} else {
 		//circulos secundarios
 		this.padre=pater;
 		this.ladopaterno= pater.lado; //deeeeesprolijo, mejor hacer una condicion para el primer circulo que da null (#oNo ? ) 
 		this.rad = pater.rad/2;
-		this.rot=pater.rot*3;
+		this.rot=pater.rot*mult;
 		//document.getElementById("test").innerHTML += (this.nivel % 2 == 0 )+ "\\";
 		
 		
@@ -185,15 +187,15 @@ class CirCulo {
 					( (this.nivel % 2 == 0 && !this.lado) || (this.nivel % 2 == 1 && this.lado  ) ) ) ) || vertical )    {
 			
 			// && this.lado ) || (this.nivel % 2 == 1 && !this.lado
-			grd1= ctx.createLinearGradient(x+r*Math.cos(3*this.rot*cont+Math.PI),
-											y-r*Math.sin(3*this.rot*cont+Math.PI),
-											x+r*Math.cos(3*this.rot*cont),
-											y-r*Math.sin(3*this.rot*cont) ); //gradiente horizontal (diagonal?)
+			grd1= ctx.createLinearGradient(x+r*Math.cos(mult*this.rot*cont+Math.PI),
+											y-r*Math.sin(mult*this.rot*cont+Math.PI),
+											x+r*Math.cos(mult*this.rot*cont),
+											y-r*Math.sin(mult*this.rot*cont) ); //gradiente horizontal (diagonal?)
 			} else {
-			grd1= ctx.createLinearGradient(x+r*Math.cos(3*this.rot*cont+Math.PI/2),
-											y-r*Math.sin(3*this.rot*cont+Math.PI/2),
-											x+r*Math.cos(3*this.rot*cont-Math.PI/2),
-											y-r*Math.sin(3*this.rot*cont-Math.PI/2) ); //gradiente vertical (diagonal?)
+			grd1= ctx.createLinearGradient(x+r*Math.cos(mult*this.rot*cont+Math.PI/2),
+											y-r*Math.sin(mult*this.rot*cont+Math.PI/2),
+											x+r*Math.cos(mult*this.rot*cont-Math.PI/2),
+											y-r*Math.sin(mult*this.rot*cont-Math.PI/2) ); //gradiente vertical (diagonal?)
 			}
 
 			if ( ( (this.ladopaterno == true || this.nivel < 2) && !vertical) || (vertical && ( ( !this.lado && !orden2) || (this.nivel % 2 == 0 && orden2))) ) { 
